@@ -1,9 +1,25 @@
-# render.yaml
+import requests
+from bs4 import BeautifulSoup
+from flask import Flask, request
 
-services:
-  - name: telegram-bot
-    dockerfile: Dockerfile
-    env:
-      TELEGRAM_TOKEN: your_bot_token
-      YSEQ_API_KEY: your_api_key
-    start_cmd: python app.py
+app = Flask(__name__)
+
+@app.route('/', methods=['POST'])
+def webhook():
+    data = request.get_json()
+    if data['message']:
+        chat_id = data['message']['chat']['id']
+        text = data['message']['text']
+        if text == '/start':
+            send_message(chat_id, 'Hello! This is a YSEQ bot.')
+        else:
+            send_message(chat_id, 'Sorry, I didn\'t understand that.')
+    return 'ok', 200
+
+def send_message(chat_id, text):
+    url = f'https://api.telegram.org/bot{TOKEN}/sendMessage'
+    data = {'chat_id': chat_id, 'text': text}
+    requests.post(url, json=data)
+
+if __name__ == '__main__':
+    app.run()
