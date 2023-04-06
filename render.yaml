@@ -1,0 +1,9 @@
+# render.yaml
+
+services:
+  - name: telegram-bot
+    dockerfile: Dockerfile
+    env:
+      TELEGRAM_TOKEN: your_bot_token
+      YSEQ_API_KEY: your_api_key
+    start_cmd: python app.py
